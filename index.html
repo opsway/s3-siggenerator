@@ -51,12 +51,12 @@
     
             <form onsubmit="return false;">
                 <div class="inputHolder">
-                    <label for="urlToSign">Url to access(i.e. bucket/file.txt)</label>
+                    <label for="urlToSign">Url to access(i.e. bucket/project.box)</label>
                     <input type="text" size="50" name="urlToSign"/> 
                 </div>
                 <div class="inputHolder">
-                    <label for="expiresInSeconds">Number of seconds until the generated link expires</label>
-                    <input type="text" size="50" name="expiresInSeconds"/>
+                    <label for="expiresInSeconds">Number of seconds until the generated link expires - default is 20years</label>
+                    <input type="text" size="50" name="expiresInSeconds" value="630720000"/>
                 </div>
                 <div class="inputHolder">
                     <label for="accessKey">AWS Access Key</label>
@@ -65,6 +65,10 @@
                 <div class="inputHolder">
                     <label for="secretAccessKey">AWS Secret Access Key</label>
                     <input type="text" size="50" name="secretAccessKey"/>
+                </div>
+                <div class="inputHolder">
+                    <label for="versionId">versionId</label>
+                    <input type="text" size="50" name="versionId"/>
                 </div>
                 <div id="inputErrorHolder">
                 </div>
@@ -88,6 +92,7 @@
             var ttl = $.trim($('input[name=expiresInSeconds]').val());
             var accessKey = $.trim($('input[name=accessKey]').val());
             var secretKey = $.trim($('input[name=secretAccessKey]').val());
+            var versionId = $.trim($('input[name=versionId]').val());
 
             var inputErrorHolder = $('#inputErrorHolder');
             inputErrorHolder.empty();
@@ -121,15 +126,15 @@
             $('#output').append('Expires at: ' + expiresAt + '<br />');
 
             var canonicalString = generateCanonicalString(url, expiresAt,
-                secretKey);
+                secretKey, versionId);
             $('#output').append('Canonical string: ' + canonicalString +
                 '<br />');
 
-            var signature = generateSignature(url, expiresAt, secretKey);
+            var signature = generateSignature(url, expiresAt, secretKey, versionId);
             $('#output').append('Signature: ' + signature + '<br />');
 
             var signedUrl = generateSignedUrl(url, expiresAt, accessKey,
-                signature);
+                signature, versionId);
             $('#output').append('<a href="' + signedUrl +'">' + signedUrl + 
                 '</a>');
 

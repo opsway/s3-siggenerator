@@ -1,18 +1,19 @@
-function generateSignature(url, expires, secretKey) {
-    var canonicalString = generateCanonicalString(url, expires);
+function generateSignature(url, expires, secretKey, versionId) {
+    var canonicalString = generateCanonicalString(url, expires, versionId);
     var signature =  b64_hmac_sha1(secretKey, canonicalString);
     return encodeURIComponent(signature); 
 }
 
-function generateCanonicalString(url, expires) {
-    return "GET\n\n\n" + expires + "\n" + url;
+function generateCanonicalString(url, expires, versionId) {
+    return "GET\n\n\n" + expires + "\n" + "x-amz-version-id:" + versionId + "\n" + url;
 }
 
-function generateSignedUrl(url, expires, accessKey, signature) {
-    var base = 'http://s3.amazonaws.com';
+function generateSignedUrl(url, expires, accessKey, signature, versionId) {
+    var base = 'http://s3-eu-west-1.amazonaws.com';
     //This format comes from the developer guide: http://s3.amazonaws.com/doc/s3-developer-guide/RESTAuthentication.html
     return base + url + '?AWSAccessKeyId=' + accessKey + 
-        '&Expires=' + expires + '&Signature=' + signature;
+        '&Expires=' + expires + '&Signature=' + signature + 
+        '&x-amz-version-id=' + versionId;
 }
 
 /*****************************************************************************
